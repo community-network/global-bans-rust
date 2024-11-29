@@ -13,6 +13,7 @@ mod structs;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    flexi_logger::Logger::try_with_str("info")?.start()?;
     match dotenvy::dotenv() {
         Ok(_) => {}
         Err(_) => log::info!(".env not found, using env variables..."),
@@ -24,7 +25,6 @@ async fn main() -> anyhow::Result<()> {
     let client = Client::with_uri_str(mongo_url).await?;
     let db = &client.database("serverManager");
 
-    flexi_logger::Logger::try_with_str("info")?.start()?;
     log::info!("Starting...");
     last_update.store(Utc::now().timestamp() / 60, atomic::Ordering::Relaxed);
 
